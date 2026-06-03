@@ -12,6 +12,8 @@ struct AddPinSheet: View {
     @State private var showFilePicker = false
     @State private var capturedImage: UIImage?
 
+    private var canUseCamera: Bool { UIImagePickerController.isSourceTypeAvailable(.camera) }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -82,8 +84,10 @@ struct AddPinSheet: View {
                 showCamera = true
             } label: {
                 optionRow(icon: "camera", color: .green,
-                          title: "Take Photo", subtitle: "Use your camera")
+                          title: canUseCamera ? "Take Photo" : "Camera Unavailable",
+                          subtitle: canUseCamera ? "Use your camera" : "Use photos or files on this device")
             }
+            .disabled(!canUseCamera)
             Button {
                 showFilePicker = true
             } label: {
@@ -124,10 +128,14 @@ struct AddPinSheet: View {
 
     private func handleFileImport(_ result: Result<[URL], Error>) {
         if case .success(let urls) = result,
-           let url = urls.first,
-           url.startAccessingSecurityScopedResource(),
-           let data = try? Data(contentsOf: url) {
-            defer { url.stopAccessingSecurityScopedResource() }
+           let url = urls.first {
+            let didStartAccessing = url.startAccessingSecurityScopedResource()
+            defer {
+                if didStartAccessing {
+                    url.stopAccessingSecurityScopedResource()
+                }
+            }
+            guard let data = try? Data(contentsOf: url) else { return }
             DispatchQueue.main.async {
                 onImageSelected(data)
                 dismiss()

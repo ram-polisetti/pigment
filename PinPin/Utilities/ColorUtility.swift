@@ -41,7 +41,6 @@ let namedColors: [NamedColor] = [
     NamedColor(name: "Phthalo Blue", hex: "#000F89"),
     NamedColor(name: "Indigo", hex: "#4B0082"),
     NamedColor(name: "Lapis Lazuli", hex: "#26619C"),
-    NamedColor(name: "Sky Blue", hex: "#87CEEB"),
     NamedColor(name: "Turquoise", hex: "#40E0D0"),
     NamedColor(name: "Manganese Violet", hex: "#7A4988"),
     NamedColor(name: "Dioxazine Purple", hex: "#5E3A7E"),

@@ -15,25 +15,15 @@ struct FavoritesView: View {
                 }
             }
             .navigationTitle("Favorites")
-            .background(Color(.systemGroupedBackground))
+            .background(Color(.systemBackground))
         }
     }
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "heart")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary.opacity(0.5))
-
-            Text("No saved colors yet")
-                .font(.title3.weight(.medium))
-                .foregroundStyle(.secondary)
-
-            Text("Pick colors from your images and save them here")
-                .font(.subheadline)
-                .foregroundStyle(.tertiary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
+        ContentUnavailableView {
+            Label("No Saved Colors", systemImage: "heart")
+        } description: {
+            Text("Pick colors from your images and save them here.")
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -63,6 +53,7 @@ struct FavoritesView: View {
 
                     Button {
                         UIPasteboard.general.string = saved.hex
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     } label: {
                         Image(systemName: "doc.on.doc")
                             .font(.caption)

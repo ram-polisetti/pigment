@@ -18,6 +18,8 @@ struct PinDetailView: View {
     @State private var pickerPoint: CGPoint?
     @State private var savedHexes: Set<String> = []
     @State private var didLoad = false
+    @State private var isDeleting = false
+    @AppStorage("handedness") private var handedness: String = "right"
 
     init(pinID: UUID) {
         self.pinID = pinID
@@ -45,17 +47,18 @@ struct PinDetailView: View {
                     colorsTab
                 }
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Color(.systemBackground))
             .navigationTitle("Detail")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: handedness == "left" ? .topBarTrailing : .topBarLeading) {
                     Button("Done") { saveAndDismiss() }
                         .fontWeight(.medium)
                 }
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: handedness == "left" ? .topBarLeading : .topBarTrailing) {
                     Button(role: .destructive) {
                         if let pin {
+                            isDeleting = true
                             modelContext.delete(pin)
                             try? modelContext.save()
                         }
@@ -81,6 +84,9 @@ struct PinDetailView: View {
             if let existing = try? modelContext.fetch(fd) {
                 savedHexes = Set(existing.map(\.hex))
             }
+        }
+        .onDisappear {
+            saveInspiration()
         }
     }
 
@@ -190,7 +196,7 @@ struct PinDetailView: View {
                 .font(.body)
                 .frame(minHeight: 140)
                 .padding(12)
-                .background(RoundedRectangle(cornerRadius: 12).fill(Color(.systemBackground)))
+                .background(RoundedRectangle(cornerRadius: 12).fill(.regularMaterial))
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color(.separator).opacity(0.4), lineWidth: 1))
                 .focused($isFocused)
                 .padding(.horizontal, 20)
@@ -257,7 +263,7 @@ struct PinDetailView: View {
             Spacer()
         }
         .padding(14)
-        .background(RoundedRectangle(cornerRadius: 12).fill(Color(.systemBackground)))
+        .background(RoundedRectangle(cornerRadius: 12).fill(.regularMaterial))
     }
 
     private func saveColorButton(_ color: Color) -> some View {
@@ -303,7 +309,7 @@ struct PinDetailView: View {
                             Text(harmony.rawValue)
                                 .font(.caption.weight(.medium))
                                 .padding(.horizontal, 12).padding(.vertical, 6)
-                                .background(Capsule().fill(selectedHarmony == harmony ? color : Color(.systemGray5)))
+                                .background(Capsule().fill(selectedHarmony == harmony ? AnyShapeStyle(color) : AnyShapeStyle(.regularMaterial)))
                                 .foregroundStyle(selectedHarmony == harmony ? .white : .primary)
                         }
                     }
@@ -345,14 +351,19 @@ struct PinDetailView: View {
             }
         }
         .padding(14)
-        .background(RoundedRectangle(cornerRadius: 12).fill(Color(.systemBackground)))
+        .background(RoundedRectangle(cornerRadius: 12).fill(.regularMaterial))
     }
 
     private func saveAndDismiss() {
+        saveInspiration()
+        dismiss()
+    }
+
+    private func saveInspiration() {
+        guard !isDeleting else { return }
         if let pin {
             pin.inspiration = inspirationText
             try? modelContext.save()
         }
-        dismiss()
     }
 }

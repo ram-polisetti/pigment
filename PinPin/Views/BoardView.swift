@@ -1,30 +1,31 @@
 import SwiftUI
 import SwiftData
-import PhotosUI
-import PhotosUI
 
 struct BoardView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Project.createdAt) private var projects: [Project]
     @Query(sort: \Pin.createdAt, order: .reverse) private var allPins: [Pin]
 
-    @State private var selectedProject: Project?
+    @AppStorage("handedness") private var handedness: String = ""
+
+    @Binding var selectedProject: Project?
+    let onAddRequested: () -> Void
+
     @State private var selectedPinID: UUID?
-    @State private var showAddSheet = false
     @State private var showNewProjectSheet = false
     @State private var showRenameSheet = false
+    @State private var showSettings = false
+    @State private var showProjectDrawer = false
     @State private var newProjectName = ""
     @State private var renameText = ""
+    @GestureState private var drawerDragTranslation: CGFloat = 0
 
-    // Quick-add states
-    @State private var showCamera = false
-    @State private var showFilePicker = false
-    @State private var selectedPhotoItem: PhotosPickerItem?
-    @State private var capturedImage: UIImage?
+    private var isLeftHanded: Bool { handedness == "left" }
+    private var drawerAlignment: Alignment { isLeftHanded ? .leading : .trailing }
 
     private var pins: [Pin] {
         if let project = selectedProject {
-            return allPins.filter { $0.project == project }
+            return allPins.filter { $0.project?.id == project.id }
         }
         return allPins.filter { $0.project == nil }
     }
@@ -35,27 +36,68 @@ struct BoardView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .bottomTrailing) {
-                VStack(spacing: 0) {
-                    projectPicker
-                    pinContent
-                }
+            GeometryReader { geometry in
+                let drawerWidth = min(320, geometry.size.width * 0.84)
 
-                addButton
+                ZStack(alignment: drawerAlignment) {
+                    pinContent
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .animation(.spring(response: 0.45, dampingFraction: 0.8), value: selectedProject?.id)
+
+                    drawerEdgeHandle
+                        .opacity(showProjectDrawer ? 0 : 1)
+                        .allowsHitTesting(!showProjectDrawer)
+
+                    if showProjectDrawer {
+                        Color.black.opacity(0.18)
+                            .ignoresSafeArea()
+                            .transition(.opacity)
+                            .onTapGesture {
+                                closeProjectDrawer()
+                            }
+                    }
+
+                    projectDrawer(width: drawerWidth, bottomInset: geometry.safeAreaInsets.bottom)
+                        .offset(x: drawerOffset(width: drawerWidth))
+                        .animation(.spring(response: 0.34, dampingFraction: 0.86), value: showProjectDrawer)
+                        .animation(.interactiveSpring(response: 0.24, dampingFraction: 0.9), value: drawerDragTranslation)
+                        .gesture(drawerDragGesture(width: drawerWidth))
+                }
             }
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.large)
-            .background(Color(.systemGroupedBackground))
             .toolbar {
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    quickButtons
+                ToolbarItem(placement: isLeftHanded ? .topBarTrailing : .topBarLeading) {
+                    HStack(spacing: 16) {
+                        Button {
+                            withAnimation(.spring(response: 0.34, dampingFraction: 0.86)) {
+                                showProjectDrawer.toggle()
+                            }
+                        } label: {
+                            Image(systemName: isLeftHanded ? "sidebar.leading" : "sidebar.trailing")
+                                .font(.body)
+                        }
+
+                        if selectedProject != nil {
+                            Button {
+                                renameText = selectedProject?.name ?? ""
+                                showRenameSheet = true
+                            } label: {
+                                Image(systemName: "pencil")
+                                    .font(.body)
+                            }
+                        }
+                        Button {
+                            showSettings = true
+                        } label: {
+                            Image(systemName: "gearshape")
+                                .font(.body)
+                        }
+                    }
                 }
             }
-        }
-        .sheet(isPresented: $showAddSheet) {
-            AddPinSheet(project: selectedProject) { imageData in
-                addPin(imageData: imageData)
-            }
+            .background(Color(.systemBackground))
+
         }
         .sheet(item: $selectedPinID) { pinID in
             PinDetailView(pinID: pinID)
@@ -71,112 +113,141 @@ struct BoardView: View {
             Button("Cancel", role: .cancel) {}
             Button("Rename") { renameProject() }
         }
-        // Quick-add handlers
-        .fullScreenCover(isPresented: $showCamera) {
-            CameraPicker(image: $capturedImage)
-                .ignoresSafeArea()
-        }
-        .onChange(of: capturedImage) { _, image in
-            guard let image, let data = image.jpegData(compressionQuality: 0.9) else { return }
-            addPin(imageData: data)
-            capturedImage = nil
-        }
-        .onChange(of: selectedPhotoItem) { _, item in
-            guard let item else { return }
-            item.loadTransferable(type: Data.self) { result in
-                if case .success(let data) = result, let data {
-                    DispatchQueue.main.async {
-                        addPin(imageData: data)
-                    }
-                }
-            }
-        }
-        .fileImporter(isPresented: $showFilePicker, allowedContentTypes: [.image], allowsMultipleSelection: false) { result in
-            if case .success(let urls) = result,
-               let url = urls.first,
-               url.startAccessingSecurityScopedResource(),
-               let data = try? Data(contentsOf: url) {
-                defer { url.stopAccessingSecurityScopedResource() }
-                addPin(imageData: data)
-            }
-        }
-    }
-
-    // MARK: - Quick Add Buttons
-
-    private var quickButtons: some View {
-        HStack(spacing: 16) {
-            PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
-                Image(systemName: "photo.on.rectangle")
-                    .font(.body)
-            }
-
-            Button {
-                showCamera = true
-            } label: {
-                Image(systemName: "camera")
-                    .font(.body)
-            }
-
-            Button {
-                showFilePicker = true
-            } label: {
-                Image(systemName: "folder")
-                    .font(.body)
-            }
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
         }
     }
 
     // MARK: - Project Picker
 
-    private var projectPicker: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ProjectChip(
-                    name: "Unfiled",
-                    isSelected: selectedProject == nil
-                ) {
-                    if selectedProject == nil {
-                        showRenameAlertForUnfiled()
-                    } else {
-                        selectedProject = nil
-                    }
-                }
+    private var drawerEdgeHandle: some View {
+        VStack {
+            Spacer()
 
-                ForEach(projects) { project in
-                    ProjectChip(
-                        name: project.name,
-                        isSelected: selectedProject == project
-                    ) {
-                        if selectedProject == project {
-                            // Tap again to rename
-                            renameText = project.name
-                            showRenameSheet = true
-                        } else {
-                            selectedProject = project
-                        }
-                    }
+            Button {
+                openProjectDrawer()
+            } label: {
+                VStack(spacing: 8) {
+                    Image(systemName: "folder")
+                        .font(.caption.weight(.semibold))
+                    Image(systemName: isLeftHanded ? "chevron.right" : "chevron.left")
+                        .font(.caption2.weight(.bold))
                 }
+                .foregroundStyle(.secondary)
+                .frame(width: 34, height: 74)
+                .background(.regularMaterial)
+                .clipShape(handleShape)
+                .overlay {
+                    handleShape
+                        .stroke(Color(.separator).opacity(0.35), lineWidth: 0.5)
+                }
+                .shadow(color: .black.opacity(0.06), radius: 8, y: 2)
+            }
+            .buttonStyle(.plain)
+            .gesture(edgeOpenGesture)
+            .padding(isLeftHanded ? .leading : .trailing, 0)
+            .padding(.bottom, 110)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: drawerAlignment)
+        .ignoresSafeArea(edges: .bottom)
+    }
+
+    private var handleShape: UnevenRoundedRectangle {
+        if isLeftHanded {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 0,
+                bottomLeadingRadius: 0,
+                bottomTrailingRadius: 12,
+                topTrailingRadius: 12,
+                style: .continuous
+            )
+        } else {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 12,
+                bottomLeadingRadius: 12,
+                bottomTrailingRadius: 0,
+                topTrailingRadius: 0,
+                style: .continuous
+            )
+        }
+    }
+
+    private func projectDrawer(width: CGFloat, bottomInset: CGFloat) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Label("Projects", systemImage: "folder")
+                    .font(.title3.weight(.semibold))
+                    .labelStyle(.titleAndIcon)
+
+                Spacer()
 
                 Button {
                     showNewProjectSheet = true
                 } label: {
-                    Image(systemName: "plus")
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(Capsule().fill(.thinMaterial))
-                        .foregroundStyle(.secondary)
+                    Image(systemName: "plus.circle.fill")
+                        .font(.headline)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .foregroundStyle(.primary)
+            .padding(.horizontal, 18)
+            .padding(.top, 18)
+            .padding(.bottom, 14)
+
+            ScrollView {
+                VStack(spacing: 8) {
+                    ProjectDrawerRow(
+                        name: "Unfiled",
+                        icon: "tray",
+                        isSelected: selectedProject == nil
+                    ) {
+                        selectProject(nil)
+                    }
+
+                    ForEach(projects) { project in
+                        ProjectDrawerRow(
+                            name: project.name,
+                            icon: "folder",
+                            isSelected: selectedProject?.id == project.id
+                        ) {
+                            selectProject(project)
+                        }
+                    }
+                }
+                .padding(.horizontal, 10)
+                .padding(.bottom, 24)
+            }
+
         }
+        .frame(width: width)
+        .frame(maxHeight: .infinity)
+        .padding(.bottom, max(bottomInset, 12))
         .background(Color(.systemGroupedBackground))
+        .clipShape(drawerShape)
+        .overlay {
+            drawerShape
+                .stroke(Color(.separator).opacity(0.35), lineWidth: 0.5)
+        }
+        .shadow(color: .black.opacity(0.16), radius: 24, x: isLeftHanded ? 8 : -8, y: 0)
     }
 
-    private func showRenameAlertForUnfiled() {
-        // "Unfiled" can't be renamed; do nothing or give feedback
+    private var drawerShape: UnevenRoundedRectangle {
+        if isLeftHanded {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 0,
+                bottomLeadingRadius: 0,
+                bottomTrailingRadius: 18,
+                topTrailingRadius: 18,
+                style: .continuous
+            )
+        } else {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 18,
+                bottomLeadingRadius: 18,
+                bottomTrailingRadius: 0,
+                topTrailingRadius: 0,
+                style: .continuous
+            )
+        }
     }
 
     // MARK: - Content
@@ -185,94 +256,44 @@ struct BoardView: View {
     private var pinContent: some View {
         if pins.isEmpty {
             emptyState
+                .transition(.opacity)
         } else {
             ScrollView {
-                LazyVStack(spacing: 12) {
+                MasonryLayout(columns: 2, spacing: 10) {
                     ForEach(pins) { pin in
-                        pinRow(pin)
+                        pinCard(pin)
                             .onTapGesture {
-                                // Force fault resolution
                                 _ = pin.imageData
                                 selectedPinID = pin.id
                             }
                     }
                 }
-                .padding(12)
+                .padding(10)
             }
+            .transition(.opacity)
         }
     }
 
     private var emptyState: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "photo.on.rectangle.angled")
-                .font(.system(size: 44))
-                .foregroundStyle(.secondary.opacity(0.4))
-            Text(selectedProject == nil
-                 ? "Use the toolbar to add your first image"
-                 : "No images in this project yet")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+        ContentUnavailableView {
+            Label("No Images", systemImage: "photo.on.rectangle.angled")
+        } description: {
+            Text("Add photos, camera captures, or files to start building this board.")
+        } actions: {
+            Button {
+                onAddRequested()
+            } label: {
+                Label("Add Image", systemImage: "plus.circle.fill")
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private func pinRow(_ pin: Pin) -> some View {
-        Group {
-            if let uiImage = pin.uiImage {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } else {
-                Rectangle()
-                    .fill(.gray.opacity(0.15))
-                    .aspectRatio(4/3, contentMode: .fit)
-                    .overlay {
-                        Image(systemName: "photo").font(.largeTitle).foregroundStyle(.secondary)
-                    }
-            }
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay(alignment: .bottomTrailing) {
-            if !pin.inspiration.isEmpty {
-                HStack(spacing: 4) {
-                    Image(systemName: "text.bubble.fill").font(.caption2)
-                    Text("Inspiration").font(.caption2.weight(.medium))
-                }
-                .foregroundStyle(.white)
-                .padding(.horizontal, 10).padding(.vertical, 6)
-                .background(.black.opacity(0.55))
-                .clipShape(Capsule())
-                .padding(8)
-            }
-        }
-        .shadow(color: .black.opacity(0.06), radius: 6, y: 2)
-    }
-
-    // MARK: - Add Button
-
-    private var addButton: some View {
-        Button {
-            showAddSheet = true
-        } label: {
-            Image(systemName: "plus")
-                .font(.title2.weight(.semibold))
-                .foregroundStyle(.white)
-                .frame(width: 56, height: 56)
-                .background(
-                    Circle().fill(.black)
-                        .shadow(color: .black.opacity(0.2), radius: 10, y: 4)
-                )
-        }
-        .padding(20)
+    private func pinCard(_ pin: Pin) -> some View {
+        PinCardView(pin: pin)
     }
 
     // MARK: - Actions
-
-    private func addPin(imageData: Data) {
-        let pin = Pin(imageData: imageData, project: selectedProject)
-        modelContext.insert(pin)
-        try? modelContext.save()
-    }
 
     private func createProject() {
         guard !newProjectName.trimmingCharacters(in: .whitespaces).isEmpty else { return }
@@ -280,6 +301,7 @@ struct BoardView: View {
         modelContext.insert(project)
         try? modelContext.save()
         selectedProject = project
+        closeProjectDrawer()
         newProjectName = ""
     }
 
@@ -289,27 +311,126 @@ struct BoardView: View {
         project.name = renameText.trimmingCharacters(in: .whitespaces)
         try? modelContext.save()
     }
+
+    private func selectProject(_ project: Project?) {
+        withAnimation(.spring(response: 0.34, dampingFraction: 0.86)) {
+            selectedProject = project
+            showProjectDrawer = false
+        }
+    }
+
+    private func closeProjectDrawer() {
+        withAnimation(.spring(response: 0.34, dampingFraction: 0.86)) {
+            showProjectDrawer = false
+        }
+    }
+
+    private func openProjectDrawer() {
+        withAnimation(.spring(response: 0.34, dampingFraction: 0.86)) {
+            showProjectDrawer = true
+        }
+    }
+
+    private func drawerOffset(width: CGFloat) -> CGFloat {
+        let closedOffset = isLeftHanded ? -width - 8 : width + 8
+        let baseOffset = showProjectDrawer ? 0 : closedOffset
+        let proposedOffset = baseOffset + drawerDragTranslation
+
+        if isLeftHanded {
+            return min(0, max(closedOffset, proposedOffset))
+        }
+        return max(0, min(closedOffset, proposedOffset))
+    }
+
+    private var edgeOpenGesture: some Gesture {
+        DragGesture(minimumDistance: 18)
+            .onEnded { value in
+                if isLeftHanded, value.translation.width > 36 {
+                    openProjectDrawer()
+                } else if !isLeftHanded, value.translation.width < -36 {
+                    openProjectDrawer()
+                }
+            }
+    }
+
+    private func drawerDragGesture(width: CGFloat) -> some Gesture {
+        DragGesture(minimumDistance: 12)
+            .updating($drawerDragTranslation) { value, state, _ in
+                let translation = value.translation.width
+                if showProjectDrawer {
+                    state = isLeftHanded ? min(0, translation) : max(0, translation)
+                } else {
+                    state = isLeftHanded ? max(0, translation) : min(0, translation)
+                }
+            }
+            .onEnded { value in
+                let translation = value.translation.width
+                let predicted = value.predictedEndTranslation.width
+
+                if showProjectDrawer {
+                    if isLeftHanded, translation < -width * 0.22 || predicted < -width * 0.34 {
+                        closeProjectDrawer()
+                    } else if !isLeftHanded, translation > width * 0.22 || predicted > width * 0.34 {
+                        closeProjectDrawer()
+                    }
+                    return
+                }
+
+                if isLeftHanded, translation > width * 0.16 || predicted > width * 0.25 {
+                    openProjectDrawer()
+                } else if !isLeftHanded, translation < -width * 0.16 || predicted < -width * 0.25 {
+                    openProjectDrawer()
+                }
+            }
+    }
 }
 
-// MARK: - Project Chip
+// MARK: - Project Drawer Row
 
-struct ProjectChip: View {
+struct ProjectDrawerRow: View {
     let name: String
+    let icon: String
     let isSelected: Bool
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            Text(name)
-                .font(.subheadline.weight(isSelected ? .semibold : .regular))
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(
-                    Capsule()
-                        .fill(isSelected ? .black : Color(.systemGray5))
-                )
-                .foregroundStyle(isSelected ? .white : .primary)
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(isSelected ? .primary : .secondary)
+                    .frame(width: 24)
+
+                Text(name)
+                    .font(.body.weight(isSelected ? .semibold : .regular))
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+
+                Spacer()
+
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.tint)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 12)
+            .background {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(Color(.secondarySystemGroupedBackground))
+                } else {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(Color(.secondarySystemGroupedBackground).opacity(0.58))
+                }
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(isSelected ? Color.accentColor.opacity(0.28) : Color(.separator).opacity(0.18), lineWidth: 0.5)
+            }
         }
+        .buttonStyle(.plain)
     }
 }
 

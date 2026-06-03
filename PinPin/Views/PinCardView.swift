@@ -8,28 +8,36 @@ struct PinCardView: View {
             if let uiImage = pin.uiImage {
                 Image(uiImage: uiImage)
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .clipped()
+                    .aspectRatio(uiImage.size.width / max(uiImage.size.height, 1), contentMode: .fit)
             } else {
-                Rectangle()
-                    .fill(.gray.opacity(0.2))
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(.regularMaterial)
+                    .aspectRatio(4 / 3, contentMode: .fit)
                     .overlay {
                         Image(systemName: "photo")
+                            .font(.title2)
                             .foregroundStyle(.secondary)
                     }
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(.primary.opacity(0.08), lineWidth: 0.5)
+        }
         .overlay(alignment: .bottomTrailing) {
             if !pin.inspiration.isEmpty {
-                Image(systemName: "text.bubble.fill")
-                    .font(.caption2)
-                    .foregroundStyle(.white)
-                    .padding(6)
-                    .background(.black.opacity(0.5))
-                    .clipShape(Circle())
-                    .padding(6)
+                Circle()
+                    .fill(.regularMaterial)
+                    .frame(width: 28, height: 28)
+                    .overlay {
+                        Image(systemName: "text.bubble.fill")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(.primary)
+                    }
+                    .padding(8)
             }
         }
+        .shadow(color: .black.opacity(0.05), radius: 8, y: 2)
     }
 }

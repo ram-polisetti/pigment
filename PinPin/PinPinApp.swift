@@ -19,7 +19,6 @@ struct PigmentApp: App {
         WindowGroup {
             ContentView()
                 .modelContainer(container)
-                .preferredColorScheme(.light)
         }
     }
 }

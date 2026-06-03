@@ -7,29 +7,37 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0663512F0814595B866F6126 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71410DDF6F43536CB22D3B32 /* OnboardingView.swift */; };
 		0F9B7E6CC8FA516D9C4D3BE2 /* ColorUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = B143003255085DAA8EC5B760 /* ColorUtility.swift */; };
 		192C2DDB202B5251B82D5770 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9E5C4FFC48355BC88986DC5 /* Project.swift */; };
 		3D9F125FF8215DEAA1664B2E /* SavedColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5190BA686D355035BEC7BAE5 /* SavedColor.swift */; };
+		53E05AF7498A551297CDFEFB /* PhotoLibraryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501213F18D1F51E89DFDBB3F /* PhotoLibraryPicker.swift */; };
 		592E3AB7DC2951548DCEF652 /* PinCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D959A66925BD5FC2A7712840 /* PinCardView.swift */; };
 		6A22B39452C153EDBDA2F08C /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B678F1597865F40B52C8D3C /* CameraPicker.swift */; };
 		6E7F5BDFC3F255F797BBD838 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9377452F32D650FC9D58B6AD /* FavoritesView.swift */; };
+		7B5DE339502E5F3AA338BF78 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF80C43B3247587594AECF3D /* SettingsView.swift */; };
 		8ED39A3045F95E7880ADC087 /* AddPinSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA3DA2EDD69D5AD18246B04C /* AddPinSheet.swift */; };
 		9C4403556AA1503282E84EC0 /* PinPinApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1154FE1E8B5790940C891A /* PinPinApp.swift */; };
 		9C5334CE27E354CD8407979C /* ColorPickerOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234C6104A87A54A8859D9D63 /* ColorPickerOverlay.swift */; };
 		AE16908CE3645A5AAECE90BE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12E7A60C93F5E5E89AC77F8 /* ContentView.swift */; };
 		B7F7940248BD531A8EFFB6B3 /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264EAD65F172534B91E63AA3 /* BoardView.swift */; };
 		D3CD12A00D3558BF871B3413 /* PinDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66D039BEDCC5A069FBF386A /* PinDetailView.swift */; };
+		F1F9672E5EA05A8A939820CB /* MasonryLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3BDB9EE71E5B76A7C3B0D0 /* MasonryLayout.swift */; };
 		FD1A84BA27ED5762AB0ED863 /* Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B309B320BB5B239F1A362D /* Pin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		234C6104A87A54A8859D9D63 /* ColorPickerOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerOverlay.swift; sourceTree = "<group>"; };
 		264EAD65F172534B91E63AA3 /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
+		35F90D5E85165DD2923A91C7 /* Pigment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pigment.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B3BDB9EE71E5B76A7C3B0D0 /* MasonryLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasonryLayout.swift; sourceTree = "<group>"; };
 		4B678F1597865F40B52C8D3C /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 		4D1154FE1E8B5790940C891A /* PinPinApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinPinApp.swift; sourceTree = "<group>"; };
+		501213F18D1F51E89DFDBB3F /* PhotoLibraryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryPicker.swift; sourceTree = "<group>"; };
 		5190BA686D355035BEC7BAE5 /* SavedColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedColor.swift; sourceTree = "<group>"; };
-		755B21149AAC5D06B38B07C0 /* Pigment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pigment.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		71410DDF6F43536CB22D3B32 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		9377452F32D650FC9D58B6AD /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
+		AF80C43B3247587594AECF3D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		B12E7A60C93F5E5E89AC77F8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B143003255085DAA8EC5B760 /* ColorUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorUtility.swift; sourceTree = "<group>"; };
 		BA3DA2EDD69D5AD18246B04C /* AddPinSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPinSheet.swift; sourceTree = "<group>"; };
@@ -40,7 +48,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		E2BC090A9E225A1C9F2BE8C8 /* Frameworks */ = {
+		1165A018921956AC89D9AC95 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -50,15 +58,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		465E6A48311F5398A9F69501 /* Utilities */ = {
+		190BD41206EF5C4AB7ED9359 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B143003255085DAA8EC5B760 /* ColorUtility.swift */,
+				35F90D5E85165DD2923A91C7 /* Pigment.app */,
 			);
-			path = Utilities;
+			name = Products;
 			sourceTree = "<group>";
 		};
-		4D69C453C4C853BB9CA8E546 /* Views */ = {
+		2F56B7CFA6F352C9B9BCAD91 /* PinPin */ = {
+			isa = PBXGroup;
+			children = (
+				E44C4E99FB4E5808B5608EAF /* Models */,
+				4C2CAB426B5A5F1D86611A41 /* Views */,
+				654D3F04A75D5F52871A3593 /* Utilities */,
+				4D1154FE1E8B5790940C891A /* PinPinApp.swift */,
+				B12E7A60C93F5E5E89AC77F8 /* ContentView.swift */,
+			);
+			path = PinPin;
+			sourceTree = "<group>";
+		};
+		4C2CAB426B5A5F1D86611A41 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				264EAD65F172534B91E63AA3 /* BoardView.swift */,
@@ -68,11 +88,23 @@
 				E66D039BEDCC5A069FBF386A /* PinDetailView.swift */,
 				234C6104A87A54A8859D9D63 /* ColorPickerOverlay.swift */,
 				9377452F32D650FC9D58B6AD /* FavoritesView.swift */,
+				71410DDF6F43536CB22D3B32 /* OnboardingView.swift */,
+				AF80C43B3247587594AECF3D /* SettingsView.swift */,
+				3B3BDB9EE71E5B76A7C3B0D0 /* MasonryLayout.swift */,
+				501213F18D1F51E89DFDBB3F /* PhotoLibraryPicker.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
 		};
-		69192689052F5A20BE0A6318 /* Models */ = {
+		654D3F04A75D5F52871A3593 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				B143003255085DAA8EC5B760 /* ColorUtility.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		E44C4E99FB4E5808B5608EAF /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				C4B309B320BB5B239F1A362D /* Pin.swift */,
@@ -82,36 +114,16 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		B2FA4AE638A157C180AC0AFB /* PinPin */ = {
-			isa = PBXGroup;
-			children = (
-				69192689052F5A20BE0A6318 /* Models */,
-				4D69C453C4C853BB9CA8E546 /* Views */,
-				465E6A48311F5398A9F69501 /* Utilities */,
-				4D1154FE1E8B5790940C891A /* PinPinApp.swift */,
-				B12E7A60C93F5E5E89AC77F8 /* ContentView.swift */,
-			);
-			path = PinPin;
-			sourceTree = "<group>";
-		};
-		B5C45CC40A3D5EE88B3B7578 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				755B21149AAC5D06B38B07C0 /* Pigment.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0F94977369A758DD88F05930 /* Pigment */ = {
+		BE4CB4FD65CE502AB3FFAB04 /* Pigment */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1714AE309A38573DACD1F535 /* Build configuration list for PBXNativeTarget "Pigment" */;
+			buildConfigurationList = 1470CE3B210C5CB988B0296E /* Build configuration list for PBXNativeTarget "Pigment" */;
 			buildPhases = (
-				A633C28CE1F750DDB7706DF1 /* Sources */,
-				E2BC090A9E225A1C9F2BE8C8 /* Frameworks */,
-				5D3D5E20CAFC5B1F812815AC /* Resources */,
+				89DE3CA6AB9652908DF52D79 /* Sources */,
+				1165A018921956AC89D9AC95 /* Frameworks */,
+				EE13051C499C50C5A57AA1A7 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -119,25 +131,25 @@
 			);
 			name = Pigment;
 			productName = Pigment;
-			productReference = 755B21149AAC5D06B38B07C0 /* Pigment.app */;
+			productReference = 35F90D5E85165DD2923A91C7 /* Pigment.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		26D92590D05056BE81CA2289 /* Project object */ = {
+		985730D0A8D55455827C89DE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2630;
 				LastUpgradeCheck = 2630;
 				TargetAttributes = {
-					0F94977369A758DD88F05930 = {
+					BE4CB4FD65CE502AB3FFAB04 = {
 						CreatedOnToolsVersion = 26.3;
 					};
 				};
 			};
-			buildConfigurationList = E5AC7FFAAB6C57E78562493A /* Build configuration list for PBXProject "PinPin" */;
+			buildConfigurationList = 829FBB0579A859ADAE282F7C /* Build configuration list for PBXProject "PinPin" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -145,18 +157,18 @@
 				en,
 				Base,
 			);
-			mainGroup = B2FA4AE638A157C180AC0AFB /* PinPin */;
-			productRefGroup = B5C45CC40A3D5EE88B3B7578 /* Products */;
+			mainGroup = 2F56B7CFA6F352C9B9BCAD91 /* PinPin */;
+			productRefGroup = 190BD41206EF5C4AB7ED9359 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0F94977369A758DD88F05930 /* Pigment */,
+				BE4CB4FD65CE502AB3FFAB04 /* Pigment */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		5D3D5E20CAFC5B1F812815AC /* Resources */ = {
+		EE13051C499C50C5A57AA1A7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -166,7 +178,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A633C28CE1F750DDB7706DF1 /* Sources */ = {
+		89DE3CA6AB9652908DF52D79 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -182,6 +194,10 @@
 				D3CD12A00D3558BF871B3413 /* PinDetailView.swift in Sources */,
 				9C5334CE27E354CD8407979C /* ColorPickerOverlay.swift in Sources */,
 				6E7F5BDFC3F255F797BBD838 /* FavoritesView.swift in Sources */,
+				0663512F0814595B866F6126 /* OnboardingView.swift in Sources */,
+				7B5DE339502E5F3AA338BF78 /* SettingsView.swift in Sources */,
+				F1F9672E5EA05A8A939820CB /* MasonryLayout.swift in Sources */,
+				53E05AF7498A551297CDFEFB /* PhotoLibraryPicker.swift in Sources */,
 				0F9B7E6CC8FA516D9C4D3BE2 /* ColorUtility.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -189,7 +205,34 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		B5FAA3CD404353F1809BFDA2 /* Release */ = {
+		29CD30E014375D24A2FDB81D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S5NFW9785Z;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Pigment;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Pigment uses the camera to capture photos for your board.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arm64;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pigment.moodboard;
+				PRODUCT_NAME = Pigment;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		84E0F497D93E533098A554A6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -216,39 +259,12 @@
 			};
 			name = Release;
 		};
-		BFDAB89B9ACE5B0B8D3F1E00 /* Release */ = {
+		A9226B7ACE12533A88323144 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = S5NFW9785Z;
-				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Pigment;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Pigment uses the camera to capture photos for your board.";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arm64;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pigment.moodboard;
-				PRODUCT_NAME = Pigment;
-				SDKROOT = iphoneos;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		E76FFE4DA4CF5E7DB7781EDE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = S5NFW9785Z;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -270,12 +286,12 @@
 			};
 			name = Debug;
 		};
-		ED868363F61A56C99EF23BAF /* Debug */ = {
+		B773EBEA11815396B52CBCA2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S5NFW9785Z;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -300,25 +316,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1714AE309A38573DACD1F535 /* Build configuration list for PBXNativeTarget "Pigment" */ = {
+		1470CE3B210C5CB988B0296E /* Build configuration list for PBXNativeTarget "Pigment" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E76FFE4DA4CF5E7DB7781EDE /* Debug */,
-				BFDAB89B9ACE5B0B8D3F1E00 /* Release */,
+				B773EBEA11815396B52CBCA2 /* Debug */,
+				29CD30E014375D24A2FDB81D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E5AC7FFAAB6C57E78562493A /* Build configuration list for PBXProject "PinPin" */ = {
+		829FBB0579A859ADAE282F7C /* Build configuration list for PBXProject "PinPin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				ED868363F61A56C99EF23BAF /* Debug */,
-				B5FAA3CD404353F1809BFDA2 /* Release */,
+				A9226B7ACE12533A88323144 /* Debug */,
+				84E0F497D93E533098A554A6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 26D92590D05056BE81CA2289 /* Project object */;
+	rootObject = 985730D0A8D55455827C89DE /* Project object */;
 }
