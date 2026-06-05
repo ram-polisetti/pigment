@@ -1,24 +1,23 @@
 import SwiftUI
 
 enum AppPalette {
-    static let ink = Color(red: 0.055, green: 0.047, blue: 0.075)
-    static let graphite = Color(red: 0.24, green: 0.225, blue: 0.29)
-    static let linen = Color(red: 1.0, green: 0.985, blue: 0.955)
-    static let plaster = Color(red: 0.955, green: 0.935, blue: 0.90)
-    static let oxideRed = Color(red: 1.0, green: 0.24, blue: 0.19)
-    static let ochre = Color(red: 1.0, green: 0.67, blue: 0.06)
-    static let mutedIris = Color(red: 0.18, green: 0.25, blue: 1.0)
-    static let orchid = Color(red: 0.80, green: 0.18, blue: 0.92)
+    static let deepCharcoal = Color(red: 0.122, green: 0.122, blue: 0.137)
+    static let warmOffWhite = Color(red: 0.961, green: 0.953, blue: 0.937)
+    static let mutedIndigo = Color(red: 0.298, green: 0.353, blue: 0.447)
+    static let dustyTerracotta = Color(red: 0.769, green: 0.416, blue: 0.290)
+    static let oliveGreen = Color(red: 0.478, green: 0.545, blue: 0.353)
+    static let softOchre = Color(red: 0.839, green: 0.659, blue: 0.353)
+    static let coolGray = Color(red: 0.659, green: 0.659, blue: 0.678)
 
-    static let vanDykeBrown = ink
-    static let rawUmber = graphite
-    static let titaniumWhite = linen
-    static let warmTitaniumWhite = linen
-    static let mauve = mutedIris
-    static let mutedMauve = mutedIris
-    static let surface = linen
-    static let raisedSurface = plaster
-    static let selectedSurface = Color(red: 1.0, green: 0.81, blue: 0.27)
-    static let hairline = ink.opacity(0.18)
-    static let secondaryText = graphite.opacity(0.82)
+    static let vanDykeBrown = deepCharcoal
+    static let rawUmber = mutedIndigo
+    static let titaniumWhite = warmOffWhite
+    static let warmTitaniumWhite = warmOffWhite
+    static let mauve = dustyTerracotta
+    static let mutedMauve = oliveGreen
+    static let surface = warmOffWhite
+    static let raisedSurface = Color(red: 0.985, green: 0.979, blue: 0.965)
+    static let selectedSurface = softOchre.opacity(0.46)
+    static let hairline = coolGray.opacity(0.34)
+    static let secondaryText = mutedIndigo.opacity(0.82)
 }
