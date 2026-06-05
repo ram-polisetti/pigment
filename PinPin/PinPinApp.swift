@@ -8,20 +8,7 @@ struct AtelierApp: App {
 
     init() {
         let schema = Schema([Pin.self, SavedColor.self, Project.self])
-#if DEBUG
-        container = Self.makeDebugContainer(schema: schema)
-#else
-        do {
-            let config = ModelConfiguration(
-                schema: schema,
-                isStoredInMemoryOnly: false,
-                cloudKitDatabase: .private("iCloud.com.atelier.references")
-            )
-            container = try ModelContainer(for: schema, configurations: config)
-        } catch {
-            fatalError("Failed to create ModelContainer: \(error)")
-        }
-#endif
+        container = Self.makeLocalContainer(schema: schema)
     }
 
     var body: some Scene {
@@ -32,8 +19,7 @@ struct AtelierApp: App {
         }
     }
 
-#if DEBUG
-    private static func makeDebugContainer(schema: Schema) -> ModelContainer {
+    private static func makeLocalContainer(schema: Schema) -> ModelContainer {
         let config = localModelConfiguration(schema: schema)
 
         do {
@@ -85,5 +71,4 @@ struct AtelierApp: App {
             }
         }
     }
-#endif
 }

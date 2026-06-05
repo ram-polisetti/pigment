@@ -34,7 +34,6 @@
 		35F90D5E85165DD2923A91C7 /* Atelier.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Atelier.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3BDB9EE71E5B76A7C3B0D0 /* MasonryLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasonryLayout.swift; sourceTree = "<group>"; };
 		41F8091BEB96A63DF9D8876B /* AppPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPalette.swift; sourceTree = "<group>"; };
-		43AC8D8AC5B5E8B69F2E41AA /* Atelier.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Atelier.entitlements; sourceTree = "<group>"; };
 		4B678F1597865F40B52C8D3C /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
 		4D1154FE1E8B5790940C891A /* PinPinApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinPinApp.swift; sourceTree = "<group>"; };
 		501213F18D1F51E89DFDBB3F /* PhotoLibraryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryPicker.swift; sourceTree = "<group>"; };
@@ -79,7 +78,6 @@
 				654D3F04A75D5F52871A3593 /* Utilities */,
 				4D1154FE1E8B5790940C891A /* PinPinApp.swift */,
 				B12E7A60C93F5E5E89AC77F8 /* ContentView.swift */,
-				43AC8D8AC5B5E8B69F2E41AA /* Atelier.entitlements */,
 				87D4BD98C3394BE6A810D13B /* Assets.xcassets */,
 			);
 			path = PinPin;
@@ -221,7 +219,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = PinPin/Atelier.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = S5NFW9785Z;
 				ENABLE_PREVIEWS = YES;
