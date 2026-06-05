@@ -13,11 +13,11 @@ enum AppPalette {
     static let rawUmber = mutedIndigo
     static let titaniumWhite = warmOffWhite
     static let warmTitaniumWhite = warmOffWhite
-    static let mauve = dustyTerracotta
-    static let mutedMauve = oliveGreen
+    static let mauve = mutedIndigo
+    static let mutedMauve = dustyTerracotta
     static let surface = warmOffWhite
     static let raisedSurface = Color(red: 0.985, green: 0.979, blue: 0.965)
-    static let selectedSurface = softOchre.opacity(0.46)
-    static let hairline = coolGray.opacity(0.34)
-    static let secondaryText = mutedIndigo.opacity(0.82)
+    static let selectedSurface = softOchre.opacity(0.26)
+    static let hairline = coolGray.opacity(0.30)
+    static let secondaryText = mutedIndigo.opacity(0.76)
 }
