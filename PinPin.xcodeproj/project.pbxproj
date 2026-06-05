@@ -31,7 +31,7 @@
 /* Begin PBXFileReference section */
 		234C6104A87A54A8859D9D63 /* ColorPickerOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerOverlay.swift; sourceTree = "<group>"; };
 		264EAD65F172534B91E63AA3 /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
-		35F90D5E85165DD2923A91C7 /* Pigment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pigment.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		35F90D5E85165DD2923A91C7 /* Atelier.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Atelier.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3BDB9EE71E5B76A7C3B0D0 /* MasonryLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasonryLayout.swift; sourceTree = "<group>"; };
 		41F8091BEB96A63DF9D8876B /* AppPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPalette.swift; sourceTree = "<group>"; };
 		4B678F1597865F40B52C8D3C /* CameraPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPicker.swift; sourceTree = "<group>"; };
@@ -65,7 +65,7 @@
 		190BD41206EF5C4AB7ED9359 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				35F90D5E85165DD2923A91C7 /* Pigment.app */,
+				35F90D5E85165DD2923A91C7 /* Atelier.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -136,8 +136,8 @@
 			dependencies = (
 			);
 			name = Pigment;
-			productName = Pigment;
-			productReference = 35F90D5E85165DD2923A91C7 /* Pigment.app */;
+			productName = Atelier;
+			productReference = 35F90D5E85165DD2923A91C7 /* Atelier.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -224,8 +224,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Pigment;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Pigment uses the camera to capture photos for your board.";
+				INFOPLIST_KEY_CFBundleDisplayName = Atelier;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Atelier uses the camera to capture references for your board.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -233,8 +233,8 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pigment.moodboard;
-				PRODUCT_NAME = Pigment;
+				PRODUCT_BUNDLE_IDENTIFIER = com.atelier.references;
+				PRODUCT_NAME = Atelier;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -251,8 +251,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Pigment;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Pigment uses the camera to capture photos for your board.";
+				INFOPLIST_KEY_CFBundleDisplayName = Atelier;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Atelier uses the camera to capture references for your board.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -260,8 +260,8 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pigment.moodboard;
-				PRODUCT_NAME = Pigment;
+				PRODUCT_BUNDLE_IDENTIFIER = com.atelier.references;
+				PRODUCT_NAME = Atelier;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -278,8 +278,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Pigment;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Pigment uses the camera to capture photos for your board.";
+				INFOPLIST_KEY_CFBundleDisplayName = Atelier;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Atelier uses the camera to capture references for your board.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -287,8 +287,8 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pigment.moodboard;
-				PRODUCT_NAME = Pigment;
+				PRODUCT_BUNDLE_IDENTIFIER = com.atelier.references;
+				PRODUCT_NAME = Atelier;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -307,8 +307,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Pigment;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Pigment uses the camera to capture photos for your board.";
+				INFOPLIST_KEY_CFBundleDisplayName = Atelier;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Atelier uses the camera to capture references for your board.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -316,8 +316,8 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pigment.moodboard;
-				PRODUCT_NAME = Pigment;
+				PRODUCT_BUNDLE_IDENTIFIER = com.atelier.references;
+				PRODUCT_NAME = Atelier;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

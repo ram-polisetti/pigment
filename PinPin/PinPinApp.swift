@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct PigmentApp: App {
+struct AtelierApp: App {
     let container: ModelContainer
 
     init() {

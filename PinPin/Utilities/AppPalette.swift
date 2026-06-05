@@ -1,15 +1,23 @@
 import SwiftUI
 
 enum AppPalette {
-    static let vanDykeBrown = Color(red: 0.30, green: 0.21, blue: 0.25)
-    static let rawUmber = Color(red: 0.48, green: 0.38, blue: 0.42)
-    static let titaniumWhite = Color(red: 0.97, green: 0.955, blue: 0.93)
-    static let warmTitaniumWhite = Color(red: 0.985, green: 0.972, blue: 0.945)
-    static let mauve = Color(red: 0.72, green: 0.52, blue: 0.65)
-    static let mutedMauve = Color(red: 0.714, green: 0.824, blue: 0.902)
-    static let surface = warmTitaniumWhite
-    static let raisedSurface = Color(red: 0.945, green: 0.925, blue: 0.935)
-    static let selectedSurface = Color(red: 0.83, green: 0.79, blue: 0.84)
-    static let hairline = vanDykeBrown.opacity(0.18)
-    static let secondaryText = rawUmber.opacity(0.78)
+    static let ink = Color(red: 0.14, green: 0.13, blue: 0.14)
+    static let graphite = Color(red: 0.35, green: 0.32, blue: 0.31)
+    static let linen = Color(red: 0.965, green: 0.935, blue: 0.89)
+    static let plaster = Color(red: 0.90, green: 0.865, blue: 0.81)
+    static let oxideRed = Color(red: 0.61, green: 0.31, blue: 0.25)
+    static let ochre = Color(red: 0.75, green: 0.54, blue: 0.25)
+    static let mutedIris = Color(red: 0.49, green: 0.43, blue: 0.57)
+
+    static let vanDykeBrown = ink
+    static let rawUmber = graphite
+    static let titaniumWhite = linen
+    static let warmTitaniumWhite = linen
+    static let mauve = oxideRed
+    static let mutedMauve = mutedIris
+    static let surface = linen
+    static let raisedSurface = plaster
+    static let selectedSurface = Color(red: 0.80, green: 0.735, blue: 0.66)
+    static let hairline = ink.opacity(0.16)
+    static let secondaryText = graphite.opacity(0.78)
 }
