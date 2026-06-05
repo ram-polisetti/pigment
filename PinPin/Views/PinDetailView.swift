@@ -3,6 +3,7 @@ import SwiftData
 
 struct PinDetailView: View {
     let pinID: UUID
+    let activeProject: Project?
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -19,10 +20,14 @@ struct PinDetailView: View {
     @State private var savedHexes: Set<String> = []
     @State private var didLoad = false
     @State private var isDeleting = false
+    @State private var detailImage: UIImage?
+    @State private var detailImageID: UUID?
+    @State private var colorSampler: ImageColorSampler?
     @AppStorage("handedness") private var handedness: String = "right"
 
-    init(pinID: UUID) {
+    init(pinID: UUID, project: Project? = nil) {
         self.pinID = pinID
+        self.activeProject = project
         _pins = Query(filter: #Predicate<Pin> { $0.id == pinID })
     }
 
@@ -32,22 +37,11 @@ struct PinDetailView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 imageSection
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                Picker("View", selection: $selectedTab) {
-                    Text("Inspiration").tag(0)
-                    Text("Colors").tag(1)
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-
-                if selectedTab == 0 {
-                    inspirationEditor
-                } else {
-                    colorsTab
-                }
+                inspirationEditor
             }
-            .background(Color(.systemBackground))
+            .background(AppPalette.surface)
             .navigationTitle("Detail")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -80,10 +74,14 @@ struct PinDetailView: View {
                 inspirationText = pin.inspiration
                 didLoad = true
             }
+            prepareImageIfNeeded()
             let fd = FetchDescriptor<SavedColor>()
             if let existing = try? modelContext.fetch(fd) {
-                savedHexes = Set(existing.map(\.hex))
+                savedHexes = Set(existing.filter(isSavedColorInCurrentBoard).map(\.hex))
             }
+        }
+        .onChange(of: pin?.id) { _, _ in
+            prepareImageIfNeeded()
         }
         .onDisappear {
             saveInspiration()
@@ -95,54 +93,59 @@ struct PinDetailView: View {
     private var imageSection: some View {
         GeometryReader { geometry in
             let containerSize = geometry.size
-            let img = pin?.uiImage
+            let img = detailImage ?? pin?.uiImage
 
             ZStack(alignment: .bottomTrailing) {
                 if let uiImage = img {
                     let imageSize = uiImage.size
                     let display = fitSize(imageSize, in: containerSize)
+                    let displayOrigin = CGPoint(
+                        x: (containerSize.width - display.width) / 2,
+                        y: (containerSize.height - display.height) / 2
+                    )
+                    let displayRect = CGRect(origin: displayOrigin, size: display)
 
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: display.width, height: display.height)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .position(x: containerSize.width / 2, y: containerSize.height / 2)
-
-                    if isDropperMode {
-                        Color.clear
-                            .contentShape(Rectangle())
+                    ZStack {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
                             .frame(width: display.width, height: display.height)
-                            .position(x: containerSize.width / 2, y: containerSize.height / 2)
-                            .gesture(
-                                DragGesture(minimumDistance: 0)
-                                    .onChanged { value in
-                                        let loc = value.location
-                                        let imgX = loc.x / display.width * imageSize.width
-                                        let imgY = loc.y / display.height * imageSize.height
-                                        if let color = uiImage.getPixelColor(at: CGPoint(x: imgX, y: imgY)) {
-                                            pickedColor = color
-                                            selectedTab = 1
-                                            pickerPoint = CGPoint(
-                                                x: containerSize.width / 2 - display.width / 2 + loc.x,
-                                                y: containerSize.height / 2 - display.height / 2 + loc.y
-                                            )
-                                        }
-                                    }
-                            )
 
-                        if let point = pickerPoint, let color = pickedColor {
-                            Circle()
-                                .fill(color)
-                                .frame(width: 36, height: 36)
-                                .overlay(Circle().stroke(.white, lineWidth: 2))
-                                .overlay {
-                                    Rectangle().fill(.white).frame(width: 12, height: 1)
-                                    Rectangle().fill(.white).frame(width: 1, height: 12)
-                                }
-                                .shadow(radius: 3)
-                                .position(x: point.x, y: point.y - 40)
+                        if isDropperMode {
+                            Color.clear
+                                .contentShape(Rectangle())
+                                .frame(width: display.width, height: display.height)
+                                .gesture(
+                                    DragGesture(minimumDistance: 0)
+                                        .onChanged { value in
+                                            let localPoint = value.location
+                                            guard localPoint.x >= 0,
+                                                  localPoint.x <= display.width,
+                                                  localPoint.y >= 0,
+                                                  localPoint.y <= display.height else { return }
+
+                                            let clampedImagePoint = CGPoint(
+                                                x: min(max(localPoint.x / display.width * imageSize.width, 0), imageSize.width - 1),
+                                                y: min(max(localPoint.y / display.height * imageSize.height, 0), imageSize.height - 1)
+                                            )
+                                            if let color = colorSampler?.color(at: clampedImagePoint, in: imageSize, sampleRadius: 6)
+                                                ?? uiImage.getPixelColor(at: clampedImagePoint, sampleRadius: 6) {
+                                                pickedColor = color
+                                                pickerPoint = CGPoint(
+                                                    x: displayOrigin.x + localPoint.x,
+                                                    y: displayOrigin.y + localPoint.y
+                                                )
+                                            }
+                                        }
+                                )
                         }
+                    }
+                    .frame(width: display.width, height: display.height)
+                    .position(x: containerSize.width / 2, y: containerSize.height / 2)
+
+                    if isDropperMode, let point = pickerPoint, let color = pickedColor {
+                        colorSampleMarker(at: point, color: color, in: displayRect)
+                            .allowsHitTesting(false)
                     }
                 } else {
                     RoundedRectangle(cornerRadius: 12)
@@ -154,26 +157,11 @@ struct PinDetailView: View {
                 }
 
                 if img != nil {
-                    Button {
-                        isDropperMode.toggle()
-                        if !isDropperMode { pickerPoint = nil }
-                    } label: {
-                        Image(systemName: isDropperMode ? "eyedropper.halffull" : "eyedropper")
-                            .font(.title3)
-                            .foregroundStyle(isDropperMode ? .white : .primary)
-                            .padding(10)
-                            .background(
-                                Circle()
-                                    .fill(isDropperMode ? Color.black : Color(.systemGray5))
-                            )
-                    }
-                    .padding(10)
+                    imageOverlayControls
+                        .padding(12)
                 }
             }
         }
-        .frame(height: 280)
-        .padding(.horizontal, 16)
-        .padding(.top, 8)
     }
 
     private func fitSize(_ imageSize: CGSize, in container: CGSize) -> CGSize {
@@ -188,26 +176,133 @@ struct PinDetailView: View {
         }
     }
 
+    private func colorSampleMarker(at point: CGPoint, color: Color, in imageRect: CGRect) -> some View {
+        let target = CGPoint(
+            x: min(max(point.x, imageRect.minX), imageRect.maxX),
+            y: min(max(point.y, imageRect.minY), imageRect.maxY)
+        )
+        let previewRadius: CGFloat = 29
+        let previewY: CGFloat = {
+            let above = target.y - 74
+            let below = target.y + 74
+            if above - previewRadius >= imageRect.minY {
+                return above
+            }
+            if below + previewRadius <= imageRect.maxY {
+                return below
+            }
+            return min(max(above, imageRect.minY + previewRadius), imageRect.maxY - previewRadius)
+        }()
+        let previewX = min(max(target.x, imageRect.minX + previewRadius), imageRect.maxX - previewRadius)
+
+        return ZStack {
+            Circle()
+                .stroke(.white, lineWidth: 2)
+                .frame(width: 24, height: 24)
+                .overlay {
+                    Circle()
+                        .stroke(.black.opacity(0.45), lineWidth: 1)
+                }
+                .position(target)
+
+            Group {
+                Rectangle()
+                    .fill(.white)
+                    .frame(width: 34, height: 1)
+                Rectangle()
+                    .fill(.white)
+                    .frame(width: 1, height: 34)
+            }
+            .shadow(color: .black.opacity(0.45), radius: 1)
+            .position(target)
+
+            Circle()
+                .fill(color)
+                .frame(width: 58, height: 58)
+                .overlay(Circle().stroke(.white, lineWidth: 3))
+                .overlay {
+                    Circle().stroke(.black.opacity(0.22), lineWidth: 1)
+                }
+                .shadow(color: .black.opacity(0.3), radius: 5, y: 2)
+                .position(x: previewX, y: previewY)
+        }
+    }
+
     // MARK: - Inspiration
 
     private var inspirationEditor: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            TextEditor(text: $inspirationText)
+        VStack(alignment: .leading, spacing: 6) {
+            TextField("Add inspiration...", text: $inspirationText, axis: .vertical)
                 .font(.body)
-                .frame(minHeight: 140)
+                .lineLimit(2...6)
                 .padding(12)
-                .background(RoundedRectangle(cornerRadius: 12).fill(.regularMaterial))
-                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color(.separator).opacity(0.4), lineWidth: 1))
+                .foregroundStyle(AppPalette.vanDykeBrown)
+                .background(RoundedRectangle(cornerRadius: 12).fill(AppPalette.raisedSurface.opacity(0.88)))
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke(AppPalette.hairline, lineWidth: 1))
                 .focused($isFocused)
-                .padding(.horizontal, 20)
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 10)
+        .padding(.bottom, 12)
+    }
 
-            if inspirationText.isEmpty {
-                Text("Add a note about what inspired you...")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
-                    .padding(.horizontal, 24)
+    private var imageOverlayControls: some View {
+        VStack(alignment: .trailing, spacing: 10) {
+            if let color = pickedColor {
+                pickedColorOverlay(color)
             }
-            Spacer()
+
+            Button {
+                isDropperMode.toggle()
+                if !isDropperMode { pickerPoint = nil }
+            } label: {
+                Image(systemName: isDropperMode ? "eyedropper.halffull" : "eyedropper")
+                    .font(.title3)
+                    .foregroundStyle(isDropperMode ? AppPalette.titaniumWhite : AppPalette.vanDykeBrown)
+                    .frame(width: 46, height: 46)
+                    .background(
+                        Circle()
+                            .fill(isDropperMode ? AppPalette.vanDykeBrown : AppPalette.raisedSurface)
+                    )
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private func pickedColorOverlay(_ color: Color) -> some View {
+        let hex = color.hexString()
+        let named = closestNamedColor(to: hex)
+        let isAlreadySaved = savedHexes.contains(hex)
+
+        return HStack(spacing: 10) {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(color)
+                .frame(width: 34, height: 34)
+                .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).stroke(.white.opacity(0.8), lineWidth: 1))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(named.name)
+                    .font(.caption.weight(.semibold))
+                    .lineLimit(1)
+                Text(hex)
+                    .font(.caption2.monospaced())
+                    .foregroundStyle(AppPalette.secondaryText)
+            }
+
+            Button {
+                toggleSavedColor(color)
+            } label: {
+                Image(systemName: isAlreadySaved ? "heart.fill" : "heart")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(isAlreadySaved ? AppPalette.mauve : AppPalette.rawUmber)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(10)
+        .background(AppPalette.raisedSurface.opacity(0.92), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(AppPalette.hairline, lineWidth: 0.5)
         }
     }
 
@@ -235,7 +330,7 @@ struct PinDetailView: View {
                 .font(.system(size: 36))
                 .foregroundStyle(.secondary.opacity(0.5))
                 .padding(.top, 40)
-            Text("Tap the eyedropper button on the image, then touch and drag to pick colors")
+            Text("Tap the eyedropper button on the reference, then touch and drag to pick colors")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -270,19 +365,7 @@ struct PinDetailView: View {
         let hex = color.hexString()
         let isAlreadySaved = savedHexes.contains(hex)
         return Button {
-            if isAlreadySaved {
-                let fd = FetchDescriptor<SavedColor>(predicate: #Predicate { $0.hex == hex })
-                if let results = try? modelContext.fetch(fd) {
-                    for saved in results { modelContext.delete(saved) }
-                    try? modelContext.save()
-                    savedHexes.remove(hex)
-                }
-            } else {
-                modelContext.insert(SavedColor(hex: hex, name: closestNamedColor(to: hex).name))
-                try? modelContext.save()
-                savedHexes.insert(hex)
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            }
+            toggleSavedColor(color)
         } label: {
             Label(
                 isAlreadySaved ? "Saved to Favorites" : "Save to Favorites",
@@ -294,6 +377,73 @@ struct PinDetailView: View {
             .background(RoundedRectangle(cornerRadius: 10).fill(isAlreadySaved ? color.opacity(0.3) : color.opacity(0.15)))
             .foregroundStyle(color)
         }
+    }
+
+    private func toggleSavedColor(_ color: Color) {
+        let hex = color.hexString()
+        toggleSavedColor(hex: hex, name: closestNamedColor(to: hex).name)
+    }
+
+    private func toggleSavedColor(hex: String, name: String) {
+        let existing = consolidatedSavedColor(hex: hex, name: name)
+
+        if let existing, let pin, !existing.containsSourcePin(pin) {
+            existing.addSourcePin(pin)
+            try? modelContext.save()
+            savedHexes.insert(hex)
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            return
+        }
+
+        if let existing {
+            if let pin, existing.allSourcePins.count > 1 {
+                existing.removeSourcePin(pin)
+            } else {
+                modelContext.delete(existing)
+                savedHexes.remove(hex)
+            }
+            try? modelContext.save()
+            return
+        }
+
+        let saved = SavedColor(hex: hex, name: name, project: activeProject, sourcePin: pin)
+        if let pin {
+            saved.addSourcePin(pin)
+        }
+        modelContext.insert(saved)
+        try? modelContext.save()
+        savedHexes.insert(hex)
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+    }
+
+    private func consolidatedSavedColor(hex: String, name: String) -> SavedColor? {
+        let fd = FetchDescriptor<SavedColor>(predicate: #Predicate { $0.hex == hex })
+        let exactMatches = (try? modelContext.fetch(fd)) ?? []
+        var boardMatches = exactMatches.filter(isSavedColorInCurrentBoard)
+
+        if boardMatches.isEmpty {
+            let allSavedDescriptor = FetchDescriptor<SavedColor>()
+            let currentBoardSaved = ((try? modelContext.fetch(allSavedDescriptor)) ?? []).filter(isSavedColorInCurrentBoard)
+            if let nearMatch = closestSavedColor(to: hex, in: currentBoardSaved) {
+                boardMatches = [nearMatch]
+            }
+        }
+
+        guard let primary = boardMatches.first else { return nil }
+
+        primary.name = name
+        for duplicate in boardMatches.dropFirst() {
+            for source in duplicate.allSourcePins {
+                primary.addSourcePin(source)
+            }
+            modelContext.delete(duplicate)
+        }
+
+        return primary
+    }
+
+    private func isSavedColorInCurrentBoard(_ saved: SavedColor) -> Bool {
+        saved.project?.id == activeProject?.id
     }
 
     private func harmoniesSection(_ color: Color) -> some View {
@@ -328,18 +478,7 @@ struct PinDetailView: View {
                         Text(name).font(.system(size: 9)).foregroundStyle(.secondary).lineLimit(1)
                         Text(hexColor).font(.system(size: 9).monospaced()).foregroundStyle(.tertiary)
                         Button {
-                            if isSaved {
-                                let fd = FetchDescriptor<SavedColor>(predicate: #Predicate { $0.hex == hexColor })
-                                if let results = try? modelContext.fetch(fd) {
-                                    for s in results { modelContext.delete(s) }
-                                    try? modelContext.save()
-                                    savedHexes.remove(hexColor)
-                                }
-                            } else {
-                                modelContext.insert(SavedColor(hex: hexColor, name: name))
-                                try? modelContext.save()
-                                savedHexes.insert(hexColor)
-                            }
+                            toggleSavedColor(hex: hexColor, name: name)
                         } label: {
                             Image(systemName: isSaved ? "heart.fill" : "heart")
                                 .font(.system(size: 10))
@@ -357,6 +496,14 @@ struct PinDetailView: View {
     private func saveAndDismiss() {
         saveInspiration()
         dismiss()
+    }
+
+    private func prepareImageIfNeeded() {
+        guard let pin, detailImageID != pin.id else { return }
+        let image = pin.uiImage
+        detailImage = image
+        colorSampler = image.flatMap(ImageColorSampler.init)
+        detailImageID = pin.id
     }
 
     private func saveInspiration() {

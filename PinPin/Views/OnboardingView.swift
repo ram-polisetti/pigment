@@ -11,7 +11,7 @@ struct OnboardingView: View {
                 VStack(spacing: 12) {
                     Image(systemName: "paintpalette")
                         .font(.system(size: 44))
-                        .foregroundStyle(.tint)
+                        .foregroundStyle(AppPalette.mauve)
 
                     Text("Set Up PinPin")
                         .font(.largeTitle.weight(.bold))
@@ -19,7 +19,7 @@ struct OnboardingView: View {
 
                     Text("Choose your dominant hand so key actions stay easy to reach.")
                         .font(.body)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(AppPalette.secondaryText)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
                 }
@@ -38,7 +38,7 @@ struct OnboardingView: View {
                 Spacer()
                 Spacer()
             }
-            .background(Color(.systemGroupedBackground))
+            .background(AppPalette.surface)
         }
     }
 
@@ -58,11 +58,12 @@ struct OnboardingView: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 128)
-            .background(Color(.secondarySystemGroupedBackground))
+            .foregroundStyle(AppPalette.vanDykeBrown)
+            .background(AppPalette.raisedSurface)
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(Color(.separator).opacity(0.35), lineWidth: 0.5)
+                    .stroke(AppPalette.hairline, lineWidth: 0.5)
             }
         }
         .buttonStyle(.plain)

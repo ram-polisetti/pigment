@@ -7,17 +7,54 @@ final class Pin {
     var imageData: Data
     var inspiration: String
     var createdAt: Date
-    var project: Project?
+    var projects: [Project]
 
     init(imageData: Data, inspiration: String = "", project: Project? = nil) {
         self.id = UUID()
         self.imageData = imageData
         self.inspiration = inspiration
         self.createdAt = Date()
-        self.project = project
+        self.projects = project.map { [$0] } ?? []
     }
 
     var uiImage: UIImage? {
-        UIImage(data: imageData)
+        UIImage(data: imageData)?.normalizedForDisplay()
+    }
+}
+
+extension Pin {
+    func isInProject(_ project: Project?) -> Bool {
+        if let project {
+            return projects.contains { $0.id == project.id }
+        }
+        return projects.isEmpty
+    }
+
+    func addToProject(_ project: Project) {
+        if !projects.contains(where: { $0.id == project.id }) {
+            projects.append(project)
+        }
+    }
+
+    func removeFromProject(_ project: Project) {
+        projects.removeAll { $0.id == project.id }
+    }
+}
+
+extension UIImage {
+    func normalizedForDisplay() -> UIImage {
+        guard imageOrientation != .up || scale != 1 else { return self }
+
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        format.opaque = false
+
+        return UIGraphicsImageRenderer(size: size, format: format).image { _ in
+            draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
+
+    func normalizedJPEGData(compressionQuality: CGFloat = 0.9) -> Data? {
+        normalizedForDisplay().jpegData(compressionQuality: compressionQuality)
     }
 }

@@ -20,7 +20,7 @@ struct AddPinSheet: View {
                 headerSection
                 optionsList
             }
-            .background(Color(.systemGroupedBackground))
+            .background(AppPalette.surface)
             .navigationBarHidden(true)
         }
         .onChange(of: selectedPhotoItem) { _, item in
@@ -32,7 +32,7 @@ struct AddPinSheet: View {
                 .ignoresSafeArea()
         }
         .onChange(of: capturedImage) { _, image in
-            guard let image, let data = image.jpegData(compressionQuality: 0.9) else { return }
+            guard let image, let data = image.normalizedJPEGData(compressionQuality: 0.9) else { return }
             onImageSelected(data)
             dismiss()
         }
@@ -54,7 +54,7 @@ struct AddPinSheet: View {
                 Button { dismiss() } label: {
                     Image(systemName: "xmark.circle.fill")
                         .font(.title2)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(AppPalette.rawUmber)
                 }
             }
             .padding(.horizontal, 24)
@@ -67,7 +67,7 @@ struct AddPinSheet: View {
                     Text("Adding to \(project.name)")
                         .font(.caption)
                 }
-                .foregroundStyle(.secondary)
+                .foregroundStyle(AppPalette.secondaryText)
                 .padding(.horizontal, 24)
             }
         }
@@ -77,13 +77,13 @@ struct AddPinSheet: View {
     private var optionsList: some View {
         List {
             PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
-                optionRow(icon: "photo.on.rectangle", color: .blue,
+                optionRow(icon: "photo.on.rectangle", color: AppPalette.mauve,
                           title: "Photo Library", subtitle: "Choose from your photos")
             }
             Button {
                 showCamera = true
             } label: {
-                optionRow(icon: "camera", color: .green,
+                optionRow(icon: "camera", color: AppPalette.rawUmber,
                           title: canUseCamera ? "Take Photo" : "Camera Unavailable",
                           subtitle: canUseCamera ? "Use your camera" : "Use photos or files on this device")
             }
@@ -91,7 +91,7 @@ struct AddPinSheet: View {
             Button {
                 showFilePicker = true
             } label: {
-                optionRow(icon: "folder", color: .orange,
+                optionRow(icon: "folder", color: AppPalette.vanDykeBrown,
                           title: "Choose File", subtitle: "Browse your files")
             }
         }
@@ -108,8 +108,8 @@ struct AddPinSheet: View {
                 .background(color.gradient)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
             VStack(alignment: .leading, spacing: 2) {
-                Text(title).font(.body.weight(.medium)).foregroundStyle(.primary)
-                Text(subtitle).font(.caption).foregroundStyle(.secondary)
+                Text(title).font(.body.weight(.medium)).foregroundStyle(AppPalette.vanDykeBrown)
+                Text(subtitle).font(.caption).foregroundStyle(AppPalette.secondaryText)
             }
         }
         .padding(.vertical, 4)
@@ -119,7 +119,7 @@ struct AddPinSheet: View {
         item.loadTransferable(type: Data.self) { result in
             if case .success(let data) = result, let data {
                 DispatchQueue.main.async {
-                    onImageSelected(data)
+                    onImageSelected(UIImage(data: data)?.normalizedJPEGData(compressionQuality: 0.9) ?? data)
                     dismiss()
                 }
             }
@@ -137,7 +137,7 @@ struct AddPinSheet: View {
             }
             guard let data = try? Data(contentsOf: url) else { return }
             DispatchQueue.main.async {
-                onImageSelected(data)
+                onImageSelected(UIImage(data: data)?.normalizedJPEGData(compressionQuality: 0.9) ?? data)
                 dismiss()
             }
         }

@@ -134,6 +134,15 @@ private func colorDistance(_ a: (Double, Double, Double), _ b: (Double, Double, 
     return sqrt((2 + rMean / 256) * dr * dr + 4 * dg * dg + (2 + (255 - rMean) / 256) * db * db)
 }
 
+func closestSavedColor(to hex: String, in savedColors: [SavedColor], threshold: Double = 18) -> SavedColor? {
+    let target = rgbFromHex(hex)
+    return savedColors
+        .map { saved in (saved, colorDistance(target, rgbFromHex(saved.hex))) }
+        .filter { $0.1 <= threshold }
+        .min { $0.1 < $1.1 }?
+        .0
+}
+
 // MARK: - Color Harmonies
 
 enum ColorHarmony: String, CaseIterable, Identifiable {

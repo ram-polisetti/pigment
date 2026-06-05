@@ -40,7 +40,7 @@ struct ColorPickerOverlay: View {
                                 let imgX = (point.x - displayOrigin.x) / displaySize.width * imageSize.width
                                 let imgY = (point.y - displayOrigin.y) / displaySize.height * imageSize.height
 
-                                if let color = uiImage.getPixelColor(at: CGPoint(x: imgX, y: imgY)) {
+                                if let color = uiImage.getPixelColor(at: CGPoint(x: imgX, y: imgY), sampleRadius: 6) {
                                     pickedColor = color
                                     onColorPicked(color)
                                 }
@@ -59,24 +59,24 @@ struct ColorPickerOverlay: View {
     }
 
     private func magnifier(at point: CGPoint, color: Color, in size: CGSize) -> some View {
-        let clampedX = min(max(point.x, 44), size.width - 44)
-        let clampedY = min(max(point.y, 44), size.height - 44)
+        let clampedX = min(max(point.x, 54), size.width - 54)
+        let clampedY = min(max(point.y, 54), size.height - 54)
 
         return ZStack {
             Circle()
                 .fill(color)
-                .frame(width: 48, height: 48)
+                .frame(width: 64, height: 64)
             Circle()
                 .stroke(.white, lineWidth: 3)
-                .frame(width: 48, height: 48)
+                .frame(width: 64, height: 64)
                 .shadow(color: .black.opacity(0.3), radius: 4, y: 2)
             // Crosshair
             Group {
-                Rectangle().fill(.white).frame(width: 16, height: 1)
-                Rectangle().fill(.white).frame(width: 1, height: 16)
+                Rectangle().fill(.white).frame(width: 22, height: 1)
+                Rectangle().fill(.white).frame(width: 1, height: 22)
             }
         }
-        .position(x: clampedX, y: clampedY - 60)
+        .position(x: clampedX, y: clampedY - 72)
     }
 }
 
@@ -99,34 +99,75 @@ private func AVMakeRect(aspectRatio: CGSize, insideRect boundingRect: CGRect) ->
 // MARK: - UIImage Pixel Sampling
 
 extension UIImage {
-    func getPixelColor(at point: CGPoint) -> Color? {
-        guard let cgImage = self.cgImage else { return nil }
-        let width = CGFloat(cgImage.width)
-        let height = CGFloat(cgImage.height)
+    func getPixelColor(at point: CGPoint, sampleRadius: CGFloat = 6) -> Color? {
+        ImageColorSampler(image: self)?.color(at: point, in: size, sampleRadius: sampleRadius)
+    }
+}
 
-        guard point.x >= 0, point.x < width,
-              point.y >= 0, point.y < height else { return nil }
+final class ImageColorSampler {
+    private let width: Int
+    private let height: Int
+    private let bytesPerPixel = 4
+    private let bytesPerRow: Int
+    private let pixels: [UInt8]
 
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bytesPerPixel = 4
-        let bytesPerRow = bytesPerPixel * 1
-        var pixel: [UInt8] = [0, 0, 0, 0]
+    init?(image: UIImage) {
+        guard let cgImage = image.cgImage else { return nil }
+
+        width = cgImage.width
+        height = cgImage.height
+        bytesPerRow = width * bytesPerPixel
+        var pixelBuffer = [UInt8](repeating: 0, count: height * bytesPerRow)
 
         guard let context = CGContext(
-            data: &pixel,
-            width: 1, height: 1,
+            data: &pixelBuffer,
+            width: width,
+            height: height,
             bitsPerComponent: 8,
             bytesPerRow: bytesPerRow,
-            space: colorSpace,
+            space: CGColorSpaceCreateDeviceRGB(),
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         ) else { return nil }
 
-        context.draw(cgImage, in: CGRect(x: -point.x, y: -point.y, width: width, height: height))
+        context.interpolationQuality = .none
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+        pixels = pixelBuffer
+    }
 
+    func color(at point: CGPoint, in imageSize: CGSize, sampleRadius: CGFloat = 6) -> Color? {
+        guard imageSize.width > 0, imageSize.height > 0 else { return nil }
+
+        let pixelX = Int((point.x / imageSize.width * CGFloat(width)).rounded())
+        let pixelY = Int((point.y / imageSize.height * CGFloat(height)).rounded())
+        guard pixelX >= 0, pixelX < width, pixelY >= 0, pixelY < height else { return nil }
+
+        let radius = max(0, Int(sampleRadius.rounded()))
+        let minX = max(0, pixelX - radius)
+        let maxX = min(width - 1, pixelX + radius)
+        let minY = max(0, pixelY - radius)
+        let maxY = min(height - 1, pixelY + radius)
+
+        var red = 0
+        var green = 0
+        var blue = 0
+        var count = 0
+
+        for y in minY...maxY {
+            let rowStart = y * bytesPerRow
+            for x in minX...maxX {
+                let offset = rowStart + x * bytesPerPixel
+                red += Int(pixels[offset])
+                green += Int(pixels[offset + 1])
+                blue += Int(pixels[offset + 2])
+                count += 1
+            }
+        }
+
+        guard count > 0 else { return nil }
         return Color(
-            red: Double(pixel[0]) / 255,
-            green: Double(pixel[1]) / 255,
-            blue: Double(pixel[2]) / 255
+            red: Double(red) / Double(count) / 255,
+            green: Double(green) / Double(count) / 255,
+            blue: Double(blue) / Double(count) / 255
         )
     }
 }

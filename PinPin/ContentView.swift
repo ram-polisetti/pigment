@@ -17,8 +17,8 @@ struct ContentView: View {
 
     private var canUseCamera: Bool { UIImagePickerController.isSourceTypeAvailable(.camera) }
     private var isLeftHanded: Bool { handedness == "left" }
-    private var controlSurface: Color { Color(red: 0.985, green: 0.972, blue: 0.94) }
-    private var selectedControlSurface: Color { Color(red: 0.94, green: 0.92, blue: 0.875) }
+    private var controlSurface: Color { AppPalette.raisedSurface }
+    private var selectedControlSurface: Color { AppPalette.selectedSurface }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -28,7 +28,7 @@ struct ContentView: View {
                         showAddMenu = true
                     }
                 } else {
-                    FavoritesView()
+                    FavoritesView(selectedProject: selectedProject)
                 }
             }
             .safeAreaInset(edge: .bottom) {
@@ -48,6 +48,7 @@ struct ContentView: View {
             bottomControls
         }
         .fontDesign(.rounded)
+        .background(AppPalette.surface)
         .onAppear {
             if handedness.isEmpty { showOnboarding = true }
         }
@@ -60,7 +61,7 @@ struct ContentView: View {
                 .ignoresSafeArea()
         }
         .onChange(of: capturedImage) { _, image in
-            guard let image, let data = image.jpegData(compressionQuality: 0.9) else { return }
+            guard let image, let data = image.normalizedJPEGData(compressionQuality: 0.9) else { return }
             addPin(imageData: data)
             capturedImage = nil
         }
@@ -111,9 +112,9 @@ struct ContentView: View {
         .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 26, style: .continuous)
-                .stroke(Color(.separator).opacity(0.22), lineWidth: 0.5)
+                .stroke(AppPalette.hairline, lineWidth: 0.5)
         }
-        .shadow(color: .black.opacity(0.1), radius: 18, y: 5)
+        .shadow(color: AppPalette.vanDykeBrown.opacity(0.14), radius: 18, y: 5)
     }
 
     private func tabButton(title: String, systemImage: String, tab: Int) -> some View {
@@ -126,7 +127,7 @@ struct ContentView: View {
             Label(title, systemImage: systemImage)
                 .font(.body.weight(selectedTab == tab ? .semibold : .medium))
                 .labelStyle(.titleAndIcon)
-                .foregroundStyle(selectedTab == tab ? .primary : .secondary)
+                .foregroundStyle(selectedTab == tab ? AppPalette.vanDykeBrown : AppPalette.rawUmber)
                 .frame(minWidth: 106)
                 .frame(height: 52)
                 .background {
@@ -147,16 +148,16 @@ struct ContentView: View {
         } label: {
             Image(systemName: "plus")
                 .font(.title2.weight(.semibold))
-                .foregroundStyle(.primary)
+                .foregroundStyle(AppPalette.vanDykeBrown)
                 .frame(width: 62, height: 62)
                 .background(controlSurface)
                 .clipShape(Circle())
                 .overlay {
                     Circle()
-                        .stroke(Color(.separator).opacity(0.22), lineWidth: 0.5)
+                        .stroke(AppPalette.hairline, lineWidth: 0.5)
                 }
                 .rotationEffect(.degrees(showAddMenu ? 45 : 0))
-                .shadow(color: .black.opacity(0.12), radius: 18, y: 5)
+                .shadow(color: AppPalette.vanDykeBrown.opacity(0.16), radius: 18, y: 5)
         }
         .buttonStyle(.plain)
     }
@@ -180,9 +181,9 @@ struct ContentView: View {
         .clipShape(Capsule(style: .continuous))
         .overlay {
             Capsule(style: .continuous)
-                .stroke(Color(.separator).opacity(0.22), lineWidth: 0.5)
+                .stroke(AppPalette.hairline, lineWidth: 0.5)
         }
-        .shadow(color: .black.opacity(0.12), radius: 18, y: 5)
+        .shadow(color: AppPalette.vanDykeBrown.opacity(0.16), radius: 18, y: 5)
         .padding(.horizontal, 18)
     }
 
@@ -195,7 +196,7 @@ struct ContentView: View {
         } label: {
             Image(systemName: systemImage)
                 .font(.headline)
-                .foregroundStyle(isDisabled ? .tertiary : .primary)
+                .foregroundStyle(isDisabled ? AppPalette.rawUmber.opacity(0.35) : AppPalette.vanDykeBrown)
                 .frame(width: 58, height: 46)
                 .background(selectedControlSurface)
                 .clipShape(Capsule(style: .continuous))
@@ -205,7 +206,8 @@ struct ContentView: View {
     }
 
     private func addPin(imageData: Data) {
-        let pin = Pin(imageData: imageData, project: selectedProject)
+        let normalizedData = UIImage(data: imageData)?.normalizedJPEGData(compressionQuality: 0.9) ?? imageData
+        let pin = Pin(imageData: normalizedData, project: selectedProject)
         modelContext.insert(pin)
         try? modelContext.save()
         UIImpactFeedbackGenerator(style: .light).impactOccurred()

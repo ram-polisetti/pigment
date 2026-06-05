@@ -6,7 +6,7 @@ final class Project {
     var id: UUID
     var name: String
     var createdAt: Date
-    @Relationship(deleteRule: .cascade, inverse: \Pin.project) var pins: [Pin]
+    @Relationship(deleteRule: .nullify, inverse: \Pin.projects) var pins: [Pin]
 
     init(name: String) {
         self.id = UUID()

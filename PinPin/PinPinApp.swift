@@ -19,6 +19,7 @@ struct PigmentApp: App {
         WindowGroup {
             ContentView()
                 .modelContainer(container)
+                .tint(AppPalette.mauve)
         }
     }
 }
