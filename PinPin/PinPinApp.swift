@@ -7,27 +7,21 @@ struct AtelierApp: App {
     let container: ModelContainer
 
     init() {
-        do {
-            let schema = Schema([Pin.self, SavedColor.self, Project.self])
+        let schema = Schema([Pin.self, SavedColor.self, Project.self])
 #if DEBUG
-            let config = Self.localModelConfiguration(schema: schema)
-            do {
-                container = try ModelContainer(for: schema, configurations: config)
-            } catch {
-                Self.resetLocalStore()
-                container = try ModelContainer(for: schema, configurations: config)
-            }
+        container = Self.makeDebugContainer(schema: schema)
 #else
+        do {
             let config = ModelConfiguration(
                 schema: schema,
                 isStoredInMemoryOnly: false,
                 cloudKitDatabase: .private("iCloud.com.atelier.references")
             )
             container = try ModelContainer(for: schema, configurations: config)
-#endif
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }
+#endif
     }
 
     var body: some Scene {
@@ -39,6 +33,30 @@ struct AtelierApp: App {
     }
 
 #if DEBUG
+    private static func makeDebugContainer(schema: Schema) -> ModelContainer {
+        let config = localModelConfiguration(schema: schema)
+
+        do {
+            return try ModelContainer(for: schema, configurations: config)
+        } catch {
+            print("Failed to open local SwiftData store: \(error)")
+            resetLocalStore()
+        }
+
+        do {
+            return try ModelContainer(for: schema, configurations: config)
+        } catch {
+            print("Failed to reopen local SwiftData store after reset: \(error)")
+        }
+
+        do {
+            let memoryConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+            return try ModelContainer(for: schema, configurations: memoryConfig)
+        } catch {
+            fatalError("Failed to create in-memory ModelContainer: \(error)")
+        }
+    }
+
     private static func localModelConfiguration(schema: Schema) -> ModelConfiguration {
         ModelConfiguration(
             schema: schema,
@@ -55,14 +73,16 @@ struct AtelierApp: App {
 
     private static func resetLocalStore() {
         let storeURL = localStoreURL()
-        let fileURLs = [
-            storeURL,
-            URL(fileURLWithPath: storeURL.path + "-shm"),
-            URL(fileURLWithPath: storeURL.path + "-wal")
-        ]
+        let storeDirectoryURL = storeURL.deletingLastPathComponent()
+        let storePrefix = storeURL.lastPathComponent
 
-        for fileURL in fileURLs {
-            try? FileManager.default.removeItem(at: fileURL)
+        if let fileURLs = try? FileManager.default.contentsOfDirectory(
+            at: storeDirectoryURL,
+            includingPropertiesForKeys: nil
+        ) {
+            for fileURL in fileURLs where fileURL.lastPathComponent.hasPrefix(storePrefix) {
+                try? FileManager.default.removeItem(at: fileURL)
+            }
         }
     }
 #endif
