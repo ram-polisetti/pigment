@@ -365,7 +365,7 @@ struct BoardView: View {
                         ForEach(pins) { pin in
                             pinCard(pin)
                                 .onTapGesture {
-                                    _ = pin.imageData
+                                    _ = pin.storedImageData
                                     selectedPinID = pin.id
                                 }
                                 .contextMenu {
@@ -464,7 +464,7 @@ struct BoardView: View {
         guard !newProjectName.trimmingCharacters(in: .whitespaces).isEmpty else { return }
         let project = Project(name: newProjectName.trimmingCharacters(in: .whitespaces))
         modelContext.insert(project)
-        try? modelContext.save()
+        modelContext.saveAndWriteAtelierSnapshot()
         selectedProject = project
         closeProjectDrawer()
         newProjectName = ""
@@ -474,7 +474,7 @@ struct BoardView: View {
         guard let project = selectedProject,
               !renameText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
         project.name = renameText.trimmingCharacters(in: .whitespaces)
-        try? modelContext.save()
+        modelContext.saveAndWriteAtelierSnapshot()
     }
 
     private func deleteProject(_ project: Project) {
@@ -482,7 +482,7 @@ struct BoardView: View {
             name: project.name,
             references: allPins
                 .filter { $0.isInProject(project) }
-                .map { DeletedReferenceSnapshot(pinID: $0.id, imageData: $0.imageData, inspiration: $0.inspiration) }
+                .map { DeletedReferenceSnapshot(pinID: $0.id, imageData: $0.storedImageData, inspiration: $0.inspiration) }
         )
         let replacementProject = replacementProjectAfterDeleting(project)
         if selectedProject?.id == project.id {
@@ -491,7 +491,7 @@ struct BoardView: View {
         projectPendingDeletion = nil
         closeProjectDrawer()
         modelContext.delete(project)
-        try? modelContext.save()
+        modelContext.saveAndWriteAtelierSnapshot()
         withAnimation(.spring(response: 0.28, dampingFraction: 0.88)) {
             recentlyDeletedProject = snapshot
         }
@@ -515,7 +515,7 @@ struct BoardView: View {
                 modelContext.insert(Pin(imageData: reference.imageData, inspiration: reference.inspiration, project: project))
             }
         }
-        try? modelContext.save()
+        modelContext.saveAndWriteAtelierSnapshot()
         selectedProject = project
         withAnimation(.spring(response: 0.28, dampingFraction: 0.88)) {
             recentlyDeletedProject = nil
@@ -551,20 +551,20 @@ struct BoardView: View {
         } else {
             modelContext.delete(pin)
         }
-        try? modelContext.save()
+        modelContext.saveAndWriteAtelierSnapshot()
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     }
 
     private func addReference(_ pin: Pin, to project: Project) {
         pin.addToProject(project)
-        try? modelContext.save()
+        modelContext.saveAndWriteAtelierSnapshot()
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 
     private func removeReferenceFromCurrentProject(_ pin: Pin) {
         guard let selectedProject else { return }
         pin.removeFromProject(selectedProject)
-        try? modelContext.save()
+        modelContext.saveAndWriteAtelierSnapshot()
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 

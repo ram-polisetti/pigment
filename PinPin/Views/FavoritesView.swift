@@ -153,6 +153,6 @@ struct FavoritesView: View {
         for index in offsets {
             modelContext.delete(boardColors[index])
         }
-        try? modelContext.save()
+        modelContext.saveAndWriteAtelierSnapshot()
     }
 }

@@ -12,11 +12,13 @@
 		165913751C985E2AAB0D5586 /* AppPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F8091BEB96A63DF9D8876B /* AppPalette.swift */; };
 		18A9F496E8E34B32A38F5F1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 87D4BD98C3394BE6A810D13B /* Assets.xcassets */; };
 		192C2DDB202B5251B82D5770 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9E5C4FFC48355BC88986DC5 /* Project.swift */; };
+		2A71C6E889B445D49DC73C21 /* ReferenceImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2C51837169464C852E5D29 /* ReferenceImageStore.swift */; };
 		3D9F125FF8215DEAA1664B2E /* SavedColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5190BA686D355035BEC7BAE5 /* SavedColor.swift */; };
 		53E05AF7498A551297CDFEFB /* PhotoLibraryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 501213F18D1F51E89DFDBB3F /* PhotoLibraryPicker.swift */; };
 		592E3AB7DC2951548DCEF652 /* PinCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D959A66925BD5FC2A7712840 /* PinCardView.swift */; };
 		6A22B39452C153EDBDA2F08C /* CameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B678F1597865F40B52C8D3C /* CameraPicker.swift */; };
 		6E7F5BDFC3F255F797BBD838 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9377452F32D650FC9D58B6AD /* FavoritesView.swift */; };
+		70A86169E96045598D52D731 /* SyncSnapshotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84898C551D84DBE8D5515FB /* SyncSnapshotStore.swift */; };
 		7B5DE339502E5F3AA338BF78 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF80C43B3247587594AECF3D /* SettingsView.swift */; };
 		8ED39A3045F95E7880ADC087 /* AddPinSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA3DA2EDD69D5AD18246B04C /* AddPinSheet.swift */; };
 		9C4403556AA1503282E84EC0 /* PinPinApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1154FE1E8B5790940C891A /* PinPinApp.swift */; };
@@ -38,10 +40,12 @@
 		4D1154FE1E8B5790940C891A /* PinPinApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinPinApp.swift; sourceTree = "<group>"; };
 		501213F18D1F51E89DFDBB3F /* PhotoLibraryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryPicker.swift; sourceTree = "<group>"; };
 		5190BA686D355035BEC7BAE5 /* SavedColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedColor.swift; sourceTree = "<group>"; };
+		5E2C51837169464C852E5D29 /* ReferenceImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferenceImageStore.swift; sourceTree = "<group>"; };
 		71410DDF6F43536CB22D3B32 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		87D4BD98C3394BE6A810D13B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9377452F32D650FC9D58B6AD /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		AF80C43B3247587594AECF3D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A84898C551D84DBE8D5515FB /* SyncSnapshotStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncSnapshotStore.swift; sourceTree = "<group>"; };
 		B12E7A60C93F5E5E89AC77F8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B143003255085DAA8EC5B760 /* ColorUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorUtility.swift; sourceTree = "<group>"; };
 		BA3DA2EDD69D5AD18246B04C /* AddPinSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPinSheet.swift; sourceTree = "<group>"; };
@@ -106,6 +110,8 @@
 			children = (
 				41F8091BEB96A63DF9D8876B /* AppPalette.swift */,
 				B143003255085DAA8EC5B760 /* ColorUtility.swift */,
+				5E2C51837169464C852E5D29 /* ReferenceImageStore.swift */,
+				A84898C551D84DBE8D5515FB /* SyncSnapshotStore.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -207,6 +213,8 @@
 				53E05AF7498A551297CDFEFB /* PhotoLibraryPicker.swift in Sources */,
 				0F9B7E6CC8FA516D9C4D3BE2 /* ColorUtility.swift in Sources */,
 				165913751C985E2AAB0D5586 /* AppPalette.swift in Sources */,
+				2A71C6E889B445D49DC73C21 /* ReferenceImageStore.swift in Sources */,
+				70A86169E96045598D52D731 /* SyncSnapshotStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

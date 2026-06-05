@@ -5,20 +5,40 @@ import UIKit
 final class Pin {
     var id: UUID
     var imageData: Data
+    var imageFilename: String?
     var inspiration: String
     var createdAt: Date
     var projects: [Project]
 
     init(imageData: Data, inspiration: String = "", project: Project? = nil) {
-        self.id = UUID()
-        self.imageData = imageData
+        let id = UUID()
+        let filename = ReferenceImageStore.storeReferenceImage(imageData, id: id)
+
+        self.id = id
+        self.imageFilename = filename
+        self.imageData = filename == nil ? imageData : Data()
         self.inspiration = inspiration
         self.createdAt = Date()
         self.projects = project.map { [$0] } ?? []
     }
 
     var uiImage: UIImage? {
-        UIImage(data: imageData)?.normalizedForDisplay()
+        ReferenceImageStore.image(named: imageFilename) ?? UIImage(data: imageData)?.normalizedForDisplay()
+    }
+
+    var storedImageData: Data {
+        ReferenceImageStore.imageData(named: imageFilename) ?? imageData
+    }
+
+    @discardableResult
+    func ensureImageFileBacked() -> Bool {
+        guard imageFilename == nil, !imageData.isEmpty else { return false }
+        imageFilename = ReferenceImageStore.storeReferenceImage(imageData, id: id)
+        if imageFilename != nil {
+            imageData = Data()
+            return true
+        }
+        return false
     }
 }
 

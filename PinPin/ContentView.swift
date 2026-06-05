@@ -209,7 +209,7 @@ struct ContentView: View {
         let normalizedData = UIImage(data: imageData)?.normalizedJPEGData(compressionQuality: 0.9) ?? imageData
         let pin = Pin(imageData: normalizedData, project: selectedProject)
         modelContext.insert(pin)
-        try? modelContext.save()
+        modelContext.saveAndWriteAtelierSnapshot()
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 

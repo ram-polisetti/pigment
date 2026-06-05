@@ -54,7 +54,7 @@ struct PinDetailView: View {
                         if let pin {
                             isDeleting = true
                             modelContext.delete(pin)
-                            try? modelContext.save()
+                            modelContext.saveAndWriteAtelierSnapshot()
                         }
                         dismiss()
                     } label: {
@@ -389,7 +389,7 @@ struct PinDetailView: View {
 
         if let existing, let pin, !existing.containsSourcePin(pin) {
             existing.addSourcePin(pin)
-            try? modelContext.save()
+            modelContext.saveAndWriteAtelierSnapshot()
             savedHexes.insert(hex)
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             return
@@ -402,7 +402,7 @@ struct PinDetailView: View {
                 modelContext.delete(existing)
                 savedHexes.remove(hex)
             }
-            try? modelContext.save()
+            modelContext.saveAndWriteAtelierSnapshot()
             return
         }
 
@@ -411,7 +411,7 @@ struct PinDetailView: View {
             saved.addSourcePin(pin)
         }
         modelContext.insert(saved)
-        try? modelContext.save()
+        modelContext.saveAndWriteAtelierSnapshot()
         savedHexes.insert(hex)
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     }
@@ -510,7 +510,7 @@ struct PinDetailView: View {
         guard !isDeleting else { return }
         if let pin {
             pin.inspiration = inspirationText
-            try? modelContext.save()
+            modelContext.saveAndWriteAtelierSnapshot()
         }
     }
 }
