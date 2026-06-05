@@ -356,37 +356,65 @@ struct BoardView: View {
             emptyState
                 .transition(.opacity)
         } else {
-            ScrollView {
-                MasonryLayout(columns: 2, spacing: 10) {
-                    ForEach(pins) { pin in
-                        pinCard(pin)
-                            .onTapGesture {
-                                _ = pin.imageData
-                                selectedPinID = pin.id
-                            }
-                            .contextMenu {
-                                projectLinkMenu(for: pin)
+            GeometryReader { geometry in
+                let columns = masonryColumnCount(for: geometry.size.width)
+                let horizontalPadding = masonryHorizontalPadding(for: geometry.size.width)
 
-                                if selectedProject != nil, pin.projects.count > 1 {
-                                    Button {
-                                        removeReferenceFromCurrentProject(pin)
+                ScrollView {
+                    MasonryLayout(columns: columns, spacing: 12) {
+                        ForEach(pins) { pin in
+                            pinCard(pin)
+                                .onTapGesture {
+                                    _ = pin.imageData
+                                    selectedPinID = pin.id
+                                }
+                                .contextMenu {
+                                    projectLinkMenu(for: pin)
+
+                                    if selectedProject != nil, pin.projects.count > 1 {
+                                        Button {
+                                            removeReferenceFromCurrentProject(pin)
+                                        } label: {
+                                            Label("Remove from This Project", systemImage: "minus.circle")
+                                        }
+                                    }
+
+                                    Button(role: .destructive) {
+                                        pinPendingDeletion = pin
+                                        showDeleteReferenceAlert = true
                                     } label: {
-                                        Label("Remove from This Project", systemImage: "minus.circle")
+                                        Label("Delete Reference", systemImage: "trash")
                                     }
                                 }
-
-                                Button(role: .destructive) {
-                                    pinPendingDeletion = pin
-                                    showDeleteReferenceAlert = true
-                                } label: {
-                                    Label("Delete Reference", systemImage: "trash")
-                                }
-                            }
+                        }
                     }
+                    .padding(.horizontal, horizontalPadding)
+                    .padding(.vertical, 12)
                 }
-                .padding(10)
             }
             .transition(.opacity)
+        }
+    }
+
+    private func masonryColumnCount(for width: CGFloat) -> Int {
+        switch width {
+        case 900...:
+            return 4
+        case 620..<900:
+            return 3
+        default:
+            return 2
+        }
+    }
+
+    private func masonryHorizontalPadding(for width: CGFloat) -> CGFloat {
+        switch width {
+        case 900...:
+            return 24
+        case 620..<900:
+            return 18
+        default:
+            return 10
         }
     }
 
